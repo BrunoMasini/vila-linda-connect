@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ObraRouteImport } from './routes/obra'
 import { Route as MinisterialRouteImport } from './routes/ministerial'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ObraRoute = ObraRouteImport.update({
+  id: '/obra',
+  path: '/obra',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MinisterialRoute = MinisterialRouteImport.update({
   id: '/ministerial',
   path: '/ministerial',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/biblia' | '/eventos' | '/ministerial'
+  fullPaths: '/' | '/biblia' | '/eventos' | '/ministerial' | '/obra'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/biblia' | '/eventos' | '/ministerial'
-  id: '__root__' | '/' | '/biblia' | '/eventos' | '/ministerial'
+  to: '/' | '/biblia' | '/eventos' | '/ministerial' | '/obra'
+  id: '__root__' | '/' | '/biblia' | '/eventos' | '/ministerial' | '/obra'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +76,18 @@ export interface RootRouteChildren {
   BibliaRoute: typeof BibliaRoute
   EventosRoute: typeof EventosRoute
   MinisterialRoute: typeof MinisterialRoute
+  ObraRoute: typeof ObraRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/obra': {
+      id: '/obra'
+      path: '/obra'
+      fullPath: '/obra'
+      preLoaderRoute: typeof ObraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ministerial': {
       id: '/ministerial'
       path: '/ministerial'
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   BibliaRoute: BibliaRoute,
   EventosRoute: EventosRoute,
   MinisterialRoute: MinisterialRoute,
+  ObraRoute: ObraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
