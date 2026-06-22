@@ -81,7 +81,7 @@ function Home() {
       <section className="mx-auto max-w-4xl px-6 py-16 text-center sm:py-24">
         <p className="text-xs uppercase tracking-[0.3em] text-gold">Boas-vindas</p>
         <h1 className="mt-4 font-display text-3xl font-black text-white sm:text-5xl">
-          A paz do Senhor!
+          A PAZ DE CRISTO JESUS!
         </h1>
         <div className="mx-auto mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-white/80 sm:text-lg">
           <p>
