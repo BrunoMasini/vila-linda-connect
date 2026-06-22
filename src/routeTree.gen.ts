@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MinisterialRouteImport } from './routes/ministerial'
 import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as IndexRouteImport } from './routes/index'
 
 const MinisterialRoute = MinisterialRouteImport.update({
@@ -23,6 +24,11 @@ const EventosRoute = EventosRouteImport.update({
   path: '/eventos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BibliaRoute = BibliaRouteImport.update({
+  id: '/biblia',
+  path: '/biblia',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/biblia': typeof BibliaRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/eventos' | '/ministerial'
+  fullPaths: '/' | '/biblia' | '/eventos' | '/ministerial'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/eventos' | '/ministerial'
-  id: '__root__' | '/' | '/eventos' | '/ministerial'
+  to: '/' | '/biblia' | '/eventos' | '/ministerial'
+  id: '__root__' | '/' | '/biblia' | '/eventos' | '/ministerial'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BibliaRoute: typeof BibliaRoute
   EventosRoute: typeof EventosRoute
   MinisterialRoute: typeof MinisterialRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/biblia': {
+      id: '/biblia'
+      path: '/biblia'
+      fullPath: '/biblia'
+      preLoaderRoute: typeof BibliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BibliaRoute: BibliaRoute,
   EventosRoute: EventosRoute,
   MinisterialRoute: MinisterialRoute,
 }
