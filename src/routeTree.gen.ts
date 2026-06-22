@@ -18,6 +18,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminMidiaRouteImport } from './routes/_authenticated/admin.midia'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 
 const ObraRoute = ObraRouteImport.update({
@@ -64,6 +65,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminMidiaRoute = AuthenticatedAdminMidiaRouteImport.update({
+  id: '/midia',
+  path: '/midia',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminEventosRoute =
   AuthenticatedAdminEventosRouteImport.update({
     id: '/eventos',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/midia': typeof AuthenticatedAdminMidiaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/midia': typeof AuthenticatedAdminMidiaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/obra': typeof ObraRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/midia': typeof AuthenticatedAdminMidiaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/obra'
     | '/admin'
     | '/admin/eventos'
+    | '/admin/midia'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/obra'
     | '/admin'
     | '/admin/eventos'
+    | '/admin/midia'
   id:
     | '__root__'
     | '/'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/obra'
     | '/_authenticated/admin'
     | '/_authenticated/admin/eventos'
+    | '/_authenticated/admin/midia'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/midia': {
+      id: '/_authenticated/admin/midia'
+      path: '/midia'
+      fullPath: '/admin/midia'
+      preLoaderRoute: typeof AuthenticatedAdminMidiaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/eventos': {
       id: '/_authenticated/admin/eventos'
       path: '/eventos'
@@ -231,10 +250,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminMidiaRoute: typeof AuthenticatedAdminMidiaRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminMidiaRoute: AuthenticatedAdminMidiaRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
