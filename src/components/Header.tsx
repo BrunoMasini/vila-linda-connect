@@ -24,9 +24,14 @@ export function Header() {
           className="flex min-w-0 items-center gap-3"
           onClick={() => setOpen(false)}
         >
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold bg-[color:var(--navy)]">
-            <span className="font-display text-sm font-black text-gold">AD</span>
+          <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-[color:var(--navy-deep)]">
+            <img
+              src={logoAsset.url}
+              alt="Logo Assembleia de Deus Ministério Vila Linda"
+              className="h-full w-full object-contain"
+            />
           </div>
+
           <div className="min-w-0">
             <p className="truncate font-display text-sm font-extrabold leading-tight text-white sm:text-base">
               Assembleia de Deus
