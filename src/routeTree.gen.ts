@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminMidiaRouteImport } from './routes/_authenticated/admin.midia'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminBiografiasRouteImport } from './routes/_authenticated/admin.biografias'
+import { Route as AuthenticatedAdminAniversariantesRouteImport } from './routes/_authenticated/admin.aniversariantes'
 
 const ObraRoute = ObraRouteImport.update({
   id: '/obra',
@@ -83,6 +84,12 @@ const AuthenticatedAdminBiografiasRoute =
     path: '/biografias',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAniversariantesRoute =
+  AuthenticatedAdminAniversariantesRouteImport.update({
+    id: '/aniversariantes',
+    path: '/aniversariantes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
@@ -121,6 +130,7 @@ export interface FileRoutesById {
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/_authenticated/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/_authenticated/admin/midia': typeof AuthenticatedAdminMidiaRoute
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/ministerial'
     | '/obra'
     | '/admin'
+    | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/eventos'
     | '/admin/midia'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/ministerial'
     | '/obra'
     | '/admin'
+    | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/eventos'
     | '/admin/midia'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
     | '/ministerial'
     | '/obra'
     | '/_authenticated/admin'
+    | '/_authenticated/admin/aniversariantes'
     | '/_authenticated/admin/biografias'
     | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/midia'
@@ -265,16 +278,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBiografiasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/aniversariantes': {
+      id: '/_authenticated/admin/aniversariantes'
+      path: '/aniversariantes'
+      fullPath: '/admin/aniversariantes'
+      preLoaderRoute: typeof AuthenticatedAdminAniversariantesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAniversariantesRoute: typeof AuthenticatedAdminAniversariantesRoute
   AuthenticatedAdminBiografiasRoute: typeof AuthenticatedAdminBiografiasRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
   AuthenticatedAdminMidiaRoute: typeof AuthenticatedAdminMidiaRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAniversariantesRoute:
+    AuthenticatedAdminAniversariantesRoute,
   AuthenticatedAdminBiografiasRoute: AuthenticatedAdminBiografiasRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
   AuthenticatedAdminMidiaRoute: AuthenticatedAdminMidiaRoute,
