@@ -9,38 +9,250 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ObraRouteImport } from './routes/obra'
+import { Route as MinisterialRouteImport } from './routes/ministerial'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as ContatosRouteImport } from './routes/contatos'
+import { Route as BibliaRouteImport } from './routes/biblia'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminMidiaRouteImport } from './routes/_authenticated/admin.midia'
+import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminBiografiasRouteImport } from './routes/_authenticated/admin.biografias'
+import { Route as AuthenticatedAdminAniversariantesRouteImport } from './routes/_authenticated/admin.aniversariantes'
 
+const ObraRoute = ObraRouteImport.update({
+  id: '/obra',
+  path: '/obra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinisterialRoute = MinisterialRouteImport.update({
+  id: '/ministerial',
+  path: '/ministerial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatosRoute = ContatosRouteImport.update({
+  id: '/contatos',
+  path: '/contatos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BibliaRoute = BibliaRouteImport.update({
+  id: '/biblia',
+  path: '/biblia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminMidiaRoute = AuthenticatedAdminMidiaRouteImport.update({
+  id: '/midia',
+  path: '/midia',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminEventosRoute =
+  AuthenticatedAdminEventosRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBiografiasRoute =
+  AuthenticatedAdminBiografiasRouteImport.update({
+    id: '/biografias',
+    path: '/biografias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAniversariantesRoute =
+  AuthenticatedAdminAniversariantesRouteImport.update({
+    id: '/aniversariantes',
+    path: '/aniversariantes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/biblia': typeof BibliaRoute
+  '/contatos': typeof ContatosRoute
+  '/eventos': typeof EventosRoute
+  '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
+  '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/biblia': typeof BibliaRoute
+  '/contatos': typeof ContatosRoute
+  '/eventos': typeof EventosRoute
+  '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
+  '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
+  '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/biblia': typeof BibliaRoute
+  '/contatos': typeof ContatosRoute
+  '/eventos': typeof EventosRoute
+  '/ministerial': typeof MinisterialRoute
+  '/obra': typeof ObraRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
+  '/_authenticated/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/biblia'
+    | '/contatos'
+    | '/eventos'
+    | '/ministerial'
+    | '/obra'
+    | '/admin'
+    | '/admin/aniversariantes'
+    | '/admin/biografias'
+    | '/admin/eventos'
+    | '/admin/midia'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/biblia'
+    | '/contatos'
+    | '/eventos'
+    | '/ministerial'
+    | '/obra'
+    | '/admin/aniversariantes'
+    | '/admin/biografias'
+    | '/admin/eventos'
+    | '/admin/midia'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/biblia'
+    | '/contatos'
+    | '/eventos'
+    | '/ministerial'
+    | '/obra'
+    | '/_authenticated/admin'
+    | '/_authenticated/admin/aniversariantes'
+    | '/_authenticated/admin/biografias'
+    | '/_authenticated/admin/eventos'
+    | '/_authenticated/admin/midia'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  BibliaRoute: typeof BibliaRoute
+  ContatosRoute: typeof ContatosRoute
+  EventosRoute: typeof EventosRoute
+  MinisterialRoute: typeof MinisterialRoute
+  ObraRoute: typeof ObraRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/obra': {
+      id: '/obra'
+      path: '/obra'
+      fullPath: '/obra'
+      preLoaderRoute: typeof ObraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ministerial': {
+      id: '/ministerial'
+      path: '/ministerial'
+      fullPath: '/ministerial'
+      preLoaderRoute: typeof MinisterialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contatos': {
+      id: '/contatos'
+      path: '/contatos'
+      fullPath: '/contatos'
+      preLoaderRoute: typeof ContatosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/biblia': {
+      id: '/biblia'
+      path: '/biblia'
+      fullPath: '/biblia'
+      preLoaderRoute: typeof BibliaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +260,92 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/midia': {
+      id: '/_authenticated/admin/midia'
+      path: '/midia'
+      fullPath: '/admin/midia'
+      preLoaderRoute: typeof AuthenticatedAdminMidiaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/eventos': {
+      id: '/_authenticated/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/biografias': {
+      id: '/_authenticated/admin/biografias'
+      path: '/biografias'
+      fullPath: '/admin/biografias'
+      preLoaderRoute: typeof AuthenticatedAdminBiografiasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/aniversariantes': {
+      id: '/_authenticated/admin/aniversariantes'
+      path: '/aniversariantes'
+      fullPath: '/admin/aniversariantes'
+      preLoaderRoute: typeof AuthenticatedAdminAniversariantesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAniversariantesRoute: typeof AuthenticatedAdminAniversariantesRoute
+  AuthenticatedAdminBiografiasRoute: typeof AuthenticatedAdminBiografiasRoute
+  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminMidiaRoute: typeof AuthenticatedAdminMidiaRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAniversariantesRoute:
+    AuthenticatedAdminAniversariantesRoute,
+  AuthenticatedAdminBiografiasRoute: AuthenticatedAdminBiografiasRoute,
+  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminMidiaRoute: AuthenticatedAdminMidiaRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  BibliaRoute: BibliaRoute,
+  ContatosRoute: ContatosRoute,
+  EventosRoute: EventosRoute,
+  MinisterialRoute: MinisterialRoute,
+  ObraRoute: ObraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
