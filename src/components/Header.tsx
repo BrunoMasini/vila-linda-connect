@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import logoAsset from "@/assets/logo-admvl.jpeg.asset.json";
+
 
 const links = [
   { to: "/", label: "Página Inicial" },
