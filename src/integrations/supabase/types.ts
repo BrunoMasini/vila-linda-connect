@@ -14,16 +14,153 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      aniversariantes: {
+        Row: {
+          created_at: string
+          data_nascimento: string
+          foto_url: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          data_nascimento: string
+          foto_url?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          data_nascimento?: string
+          foto_url?: string | null
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      banners: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          imagem_url: string
+          ordem: number
+          titulo: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          imagem_url: string
+          ordem?: number
+          titulo?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          imagem_url?: string
+          ordem?: number
+          titulo?: string | null
+        }
+        Relationships: []
+      }
+      eventos: {
+        Row: {
+          created_at: string
+          data: string
+          descricao: string | null
+          hora: string | null
+          id: string
+          preletor: string | null
+          titulo: string
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          descricao?: string | null
+          hora?: string | null
+          id?: string
+          preletor?: string | null
+          titulo: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          descricao?: string | null
+          hora?: string | null
+          id?: string
+          preletor?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
+      lideres: {
+        Row: {
+          biografia: string | null
+          cargo: string
+          created_at: string
+          foto_url: string | null
+          id: string
+          nome: string
+          ordem: number
+        }
+        Insert: {
+          biografia?: string | null
+          cargo: string
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome: string
+          ordem?: number
+        }
+        Update: {
+          biografia?: string | null
+          cargo?: string
+          created_at?: string
+          foto_url?: string | null
+          id?: string
+          nome?: string
+          ordem?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +287,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin"],
+    },
   },
 } as const
