@@ -14,6 +14,7 @@ import { Route as MinisterialRouteImport } from './routes/ministerial'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as ContatosRouteImport } from './routes/contatos'
 import { Route as BibliaRouteImport } from './routes/biblia'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
 const ObraRoute = ObraRouteImport.update({
@@ -41,6 +42,11 @@ const BibliaRoute = BibliaRouteImport.update({
   path: '/biblia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -49,6 +55,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
   '/eventos': typeof EventosRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
   '/eventos': typeof EventosRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
   '/eventos': typeof EventosRoute
@@ -76,16 +85,25 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/biblia'
     | '/contatos'
     | '/eventos'
     | '/ministerial'
     | '/obra'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/biblia' | '/contatos' | '/eventos' | '/ministerial' | '/obra'
+  to:
+    | '/'
+    | '/auth'
+    | '/biblia'
+    | '/contatos'
+    | '/eventos'
+    | '/ministerial'
+    | '/obra'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/biblia'
     | '/contatos'
     | '/eventos'
@@ -95,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   BibliaRoute: typeof BibliaRoute
   ContatosRoute: typeof ContatosRoute
   EventosRoute: typeof EventosRoute
@@ -139,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BibliaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -151,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   BibliaRoute: BibliaRoute,
   ContatosRoute: ContatosRoute,
   EventosRoute: EventosRoute,
