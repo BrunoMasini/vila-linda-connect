@@ -1,18 +1,25 @@
-Plano: trocar o logo do site pela imagem enviada
+Adicionar um botão de acesso ao portal administrativo no site.
 
-1. Verificar/validar a imagem enviada (`WhatsApp_Image_2026-06-22_at_11.28.39.jpeg`) e identificar se precisa de recorte ou fundo transparente.
+## O que será feito
 
-2. Fazer upload da imagem para a CDN do Lovable Assets (para não pesar o repositório):
-   - Criar o ponteiro em `src/assets/logo-admvl.png.asset.json` com URL CDN.
+- Inserir um link/botão discreto "Acesso Admin" no `Header.tsx`.
+- Posicionar o botão na versão desktop, ao lado dos links de navegação existentes.
+- Incluir o mesmo botão no menu mobile (hambúrguer) para manter a consistência.
+- O botão deve apontar para a rota `/auth`, já existente no projeto.
+- Usar `<Link>` do TanStack Router para preservar navegação tipada, preload e acessibilidade.
+- Aplicar estilo coerente com a identidade visual atual: fundo transparente com borda dourada (`border-gold`) e texto dourado, ou botão sólido dourado (`bg-gold`) conforme decidir o usuário na aprovação.
+- Garantir que o botão não quebre o layout responsivo nem conflite com o menu mobile.
 
-3. Atualizar `src/components/Header.tsx`:
-   - Substituir o badge circular com as letras "AD" pela imagem do logo.
-   - Manter o redirecionamento para a home (`to="/"`) e o comportamento de fechar o menu mobile.
-   - Ajustar tamanho para caber no cabeçalho (ex.: `h-10 w-10` ou `h-12 w-12`, redondo, `object-contain`) sem quebrar a altura do header.
-   - Garantir `alt` descritivo para acessibilidade.
+## Arquivos envolvidos
 
-4. Manter o texto ao lado do logo ("Assembleia de Deus / Ministério Vila Linda") como está, já que a imagem é o emblema circular e o layout atual separa o ícone do nome.
+- `src/components/Header.tsx`
 
-5. Verificar se algum outro componente reutiliza o logo (SplashScreen, Footer, favicon) e, se houver, atualizar consistentemente.
+## Validação
 
-6. Validar visualmente no preview: logo carregando, proporção preservada, layout do header inalterado.
+- Verificar visualmente no preview se o botão aparece corretamente no desktop e no mobile.
+- Confirmar que o clique redireciona para `/auth`.
+
+## Notas técnicas
+
+- Não serão alteradas regras de autenticação, rotas protegidas ou lógica de login.
+- A mudança é puramente de interface/navegação.

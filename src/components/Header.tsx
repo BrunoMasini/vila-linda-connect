@@ -55,7 +55,15 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/auth"
+            className="ml-2 rounded-md border border-gold px-3 py-2 text-sm font-bold text-gold transition-colors hover:bg-gold hover:text-[color:var(--navy)]"
+          >
+            Acesso Admin
+          </Link>
         </nav>
+
+
 
         <button
           type="button"
