@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
+import { useSiteTextos } from "@/lib/site-textos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,6 +24,7 @@ type Banner = { id: string; imagem_url: string; titulo: string | null };
 
 function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false }));
+  const { data: textos = {} } = useSiteTextos();
 
   const { data: banners = [] } = useQuery({
     queryKey: ["banners-ativos"],
@@ -81,22 +83,20 @@ function Home() {
       <section className="mx-auto max-w-4xl px-6 py-16 text-center sm:py-24">
         <p className="text-xs uppercase tracking-[0.3em] text-gold">Boas-vindas</p>
         <h1 className="mt-4 font-display text-3xl font-black text-white sm:text-5xl">
-          A PAZ DE CRISTO JESUS!
+          {textos.home_titulo ?? "A PAZ DE CRISTO JESUS!"}
         </h1>
         <div className="mx-auto mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-white/80 sm:text-lg">
-          <p>
-            É com profunda alegria que recebemos você na <strong className="text-white">Igreja Assembleia
-            de Deus — Ministério Vila Linda</strong>. Somos uma comunidade de fé comprometida com a
-            pregação do evangelho de Jesus Cristo, com a edificação dos santos e com o amor ao próximo.
-          </p>
-          <p>
-            Aqui você encontra cultos de ensino, momentos de oração, eventos da família e
-            departamentos que vivem a missão da igreja em todas as fases da vida. Venha conhecer,
-            participar e fazer parte desta família.
-          </p>
-          <p className="font-display text-lg font-bold text-gold">
-            “Eu e a minha casa serviremos ao Senhor.” — Josué 24:15
-          </p>
+          {textos.home_paragrafo1 && (
+            <p className="whitespace-pre-line">{textos.home_paragrafo1}</p>
+          )}
+          {textos.home_paragrafo2 && (
+            <p className="whitespace-pre-line">{textos.home_paragrafo2}</p>
+          )}
+          {textos.home_versiculo && (
+            <p className="font-display text-lg font-bold text-gold">
+              {textos.home_versiculo}
+            </p>
+          )}
         </div>
       </section>
     </div>
