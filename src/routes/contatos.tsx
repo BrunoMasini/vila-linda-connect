@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Phone, MapPin, Mail, Instagram, Facebook, Youtube } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Phone, MapPin, Mail, Instagram, Facebook, Youtube, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/contatos")({
   head: () => ({
@@ -11,7 +13,47 @@ export const Route = createFileRoute("/contatos")({
   component: ContatosPage,
 });
 
+type Contatos = {
+  endereco: string;
+  telefone: string;
+  whatsapp: string;
+  email: string;
+  instagram: string;
+  facebook: string;
+  youtube: string;
+  mapa_url: string;
+};
+
 function ContatosPage() {
+  const { data } = useQuery({
+    queryKey: ["site-contatos"],
+    queryFn: async (): Promise<Contatos | null> => {
+      const { data, error } = await supabase
+        .from("contatos_igreja")
+        .select("endereco, telefone, whatsapp, email, instagram, facebook, youtube, mapa_url")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data as Contatos | null;
+    },
+  });
+
+  const c = data ?? {
+    endereco: "", telefone: "", whatsapp: "", email: "",
+    instagram: "", facebook: "", youtube: "", mapa_url: "",
+  };
+
+  const redes = [
+    c.instagram && { Icon: Instagram, label: "Instagram", href: c.instagram },
+    c.facebook && { Icon: Facebook, label: "Facebook", href: c.facebook },
+    c.youtube && { Icon: Youtube, label: "YouTube", href: c.youtube },
+    c.whatsapp && {
+      Icon: MessageCircle,
+      label: "WhatsApp",
+      href: `https://wa.me/${c.whatsapp.replace(/\D/g, "")}`,
+    },
+  ].filter(Boolean) as { Icon: React.ComponentType<{ className?: string }>; label: string; href: string }[];
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
       <header className="mb-10 text-center">
@@ -21,47 +63,48 @@ function ContatosPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
-          <Linha icon={MapPin} titulo="Endereço">
-            Vila Linda — atualize com o endereço completo da igreja
-          </Linha>
-          <Linha icon={Phone} titulo="Telefone">
-            (00) 0000-0000
-          </Linha>
-          <Linha icon={Mail} titulo="E-mail">
-            contato@advilalinda.com.br
-          </Linha>
-          <div className="rounded-xl border border-white/10 bg-[color:var(--card)] p-5">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gold">
-              Redes Sociais
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {[
-                { Icon: Instagram, label: "Instagram", href: "#" },
-                { Icon: Facebook, label: "Facebook", href: "#" },
-                { Icon: Youtube, label: "YouTube", href: "#" },
-              ].map(({ Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-md border border-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
-                >
-                  <Icon className="h-4 w-4" /> {label}
-                </a>
-              ))}
+          {c.endereco && (
+            <Linha icon={MapPin} titulo="Endereço">{c.endereco}</Linha>
+          )}
+          {c.telefone && (
+            <Linha icon={Phone} titulo="Telefone">{c.telefone}</Linha>
+          )}
+          {c.email && (
+            <Linha icon={Mail} titulo="E-mail">{c.email}</Linha>
+          )}
+
+          {redes.length > 0 && (
+            <div className="rounded-xl border border-white/10 bg-[color:var(--card)] p-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-gold">
+                Redes Sociais
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {redes.map(({ Icon, label, href }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-md border border-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-gold hover:text-gold"
+                  >
+                    <Icon className="h-4 w-4" /> {label}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-[color:var(--card)]">
-          <iframe
-            title="Mapa"
-            src="https://www.google.com/maps?q=Vila+Linda+Santo+Andre&output=embed"
-            className="h-[420px] w-full"
-            loading="lazy"
-          />
-        </div>
+        {c.mapa_url && (
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-[color:var(--card)]">
+            <iframe
+              title="Mapa"
+              src={c.mapa_url}
+              className="h-[420px] w-full"
+              loading="lazy"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -83,7 +126,7 @@ function Linha({
       </div>
       <div className="min-w-0">
         <p className="text-xs font-bold uppercase tracking-widest text-gold">{titulo}</p>
-        <p className="mt-1 text-sm text-white/90">{children}</p>
+        <p className="mt-1 whitespace-pre-line text-sm text-white/90">{children}</p>
       </div>
     </div>
   );

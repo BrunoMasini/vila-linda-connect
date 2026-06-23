@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteTextos } from "@/lib/site-textos";
 import { useState } from "react";
 import {
   Dialog,
@@ -29,6 +30,7 @@ type Lider = {
 };
 
 function MinisterialPage() {
+  const { data: textos = {} } = useSiteTextos();
   const { data = [], isLoading } = useQuery({
     queryKey: ["lideres"],
     queryFn: async (): Promise<Lider[]> => {
@@ -48,9 +50,11 @@ function MinisterialPage() {
         <h1 className="mt-3 font-display text-3xl font-black text-white sm:text-5xl">
           Gestão Ministerial
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-sm text-white/70 sm:text-base">
-          Conheça os pastores, dirigentes e líderes que servem a esta casa com amor e dedicação.
-        </p>
+        {textos.ministerial_subtitulo && (
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-white/70 sm:text-base">
+            {textos.ministerial_subtitulo}
+          </p>
+        )}
       </header>
 
       {isLoading ? (

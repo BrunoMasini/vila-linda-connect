@@ -19,8 +19,11 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminPaginaInicialRouteImport } from './routes/_authenticated/admin.pagina-inicial'
+import { Route as AuthenticatedAdminObraRouteImport } from './routes/_authenticated/admin.obra'
 import { Route as AuthenticatedAdminMidiaRouteImport } from './routes/_authenticated/admin.midia'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminContatosRouteImport } from './routes/_authenticated/admin.contatos'
 import { Route as AuthenticatedAdminBiografiasRouteImport } from './routes/_authenticated/admin.biografias'
 import { Route as AuthenticatedAdminAniversariantesRouteImport } from './routes/_authenticated/admin.aniversariantes'
 
@@ -73,6 +76,17 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminPaginaInicialRoute =
+  AuthenticatedAdminPaginaInicialRouteImport.update({
+    id: '/pagina-inicial',
+    path: '/pagina-inicial',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminObraRoute = AuthenticatedAdminObraRouteImport.update({
+  id: '/obra',
+  path: '/obra',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminMidiaRoute = AuthenticatedAdminMidiaRouteImport.update({
   id: '/midia',
   path: '/midia',
@@ -82,6 +96,12 @@ const AuthenticatedAdminEventosRoute =
   AuthenticatedAdminEventosRouteImport.update({
     id: '/eventos',
     path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminContatosRoute =
+  AuthenticatedAdminContatosRouteImport.update({
+    id: '/contatos',
+    path: '/contatos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBiografiasRoute =
@@ -108,8 +128,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/admin/contatos': typeof AuthenticatedAdminContatosRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/admin/obra': typeof AuthenticatedAdminObraRoute
+  '/admin/pagina-inicial': typeof AuthenticatedAdminPaginaInicialRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -122,8 +145,11 @@ export interface FileRoutesByTo {
   '/obra': typeof ObraRoute
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/admin/contatos': typeof AuthenticatedAdminContatosRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/admin/obra': typeof AuthenticatedAdminObraRoute
+  '/admin/pagina-inicial': typeof AuthenticatedAdminPaginaInicialRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -139,8 +165,11 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/_authenticated/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
+  '/_authenticated/admin/contatos': typeof AuthenticatedAdminContatosRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/_authenticated/admin/midia': typeof AuthenticatedAdminMidiaRoute
+  '/_authenticated/admin/obra': typeof AuthenticatedAdminObraRoute
+  '/_authenticated/admin/pagina-inicial': typeof AuthenticatedAdminPaginaInicialRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -156,8 +185,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/aniversariantes'
     | '/admin/biografias'
+    | '/admin/contatos'
     | '/admin/eventos'
     | '/admin/midia'
+    | '/admin/obra'
+    | '/admin/pagina-inicial'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -170,8 +202,11 @@ export interface FileRouteTypes {
     | '/obra'
     | '/admin/aniversariantes'
     | '/admin/biografias'
+    | '/admin/contatos'
     | '/admin/eventos'
     | '/admin/midia'
+    | '/admin/obra'
+    | '/admin/pagina-inicial'
     | '/admin'
   id:
     | '__root__'
@@ -186,8 +221,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/admin/aniversariantes'
     | '/_authenticated/admin/biografias'
+    | '/_authenticated/admin/contatos'
     | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/midia'
+    | '/_authenticated/admin/obra'
+    | '/_authenticated/admin/pagina-inicial'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -274,6 +312,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/pagina-inicial': {
+      id: '/_authenticated/admin/pagina-inicial'
+      path: '/pagina-inicial'
+      fullPath: '/admin/pagina-inicial'
+      preLoaderRoute: typeof AuthenticatedAdminPaginaInicialRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/obra': {
+      id: '/_authenticated/admin/obra'
+      path: '/obra'
+      fullPath: '/admin/obra'
+      preLoaderRoute: typeof AuthenticatedAdminObraRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/midia': {
       id: '/_authenticated/admin/midia'
       path: '/midia'
@@ -286,6 +338,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/admin/eventos'
       preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/contatos': {
+      id: '/_authenticated/admin/contatos'
+      path: '/contatos'
+      fullPath: '/admin/contatos'
+      preLoaderRoute: typeof AuthenticatedAdminContatosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/biografias': {
@@ -308,8 +367,11 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAniversariantesRoute: typeof AuthenticatedAdminAniversariantesRoute
   AuthenticatedAdminBiografiasRoute: typeof AuthenticatedAdminBiografiasRoute
+  AuthenticatedAdminContatosRoute: typeof AuthenticatedAdminContatosRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
   AuthenticatedAdminMidiaRoute: typeof AuthenticatedAdminMidiaRoute
+  AuthenticatedAdminObraRoute: typeof AuthenticatedAdminObraRoute
+  AuthenticatedAdminPaginaInicialRoute: typeof AuthenticatedAdminPaginaInicialRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -317,8 +379,11 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAniversariantesRoute:
     AuthenticatedAdminAniversariantesRoute,
   AuthenticatedAdminBiografiasRoute: AuthenticatedAdminBiografiasRoute,
+  AuthenticatedAdminContatosRoute: AuthenticatedAdminContatosRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
   AuthenticatedAdminMidiaRoute: AuthenticatedAdminMidiaRoute,
+  AuthenticatedAdminObraRoute: AuthenticatedAdminObraRoute,
+  AuthenticatedAdminPaginaInicialRoute: AuthenticatedAdminPaginaInicialRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 

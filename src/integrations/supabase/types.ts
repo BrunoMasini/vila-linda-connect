@@ -65,6 +65,51 @@ export type Database = {
         }
         Relationships: []
       }
+      contatos_igreja: {
+        Row: {
+          created_at: string
+          email: string
+          endereco: string
+          facebook: string
+          id: string
+          instagram: string
+          mapa_url: string
+          singleton: boolean
+          telefone: string
+          updated_at: string
+          whatsapp: string
+          youtube: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string
+          endereco?: string
+          facebook?: string
+          id?: string
+          instagram?: string
+          mapa_url?: string
+          singleton?: boolean
+          telefone?: string
+          updated_at?: string
+          whatsapp?: string
+          youtube?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          endereco?: string
+          facebook?: string
+          id?: string
+          instagram?: string
+          mapa_url?: string
+          singleton?: boolean
+          telefone?: string
+          updated_at?: string
+          whatsapp?: string
+          youtube?: string
+        }
+        Relationships: []
+      }
       eventos: {
         Row: {
           created_at: string
@@ -122,6 +167,63 @@ export type Database = {
           id?: string
           nome?: string
           ordem?: number
+        }
+        Relationships: []
+      }
+      obra_cards: {
+        Row: {
+          created_at: string
+          detalhe: string
+          icone: string
+          id: string
+          ordem: number
+          texto: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detalhe?: string
+          icone?: string
+          id?: string
+          ordem?: number
+          texto?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detalhe?: string
+          icone?: string
+          id?: string
+          ordem?: number
+          texto?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pagina_textos: {
+        Row: {
+          chave: string
+          created_at: string
+          id: string
+          updated_at: string
+          valor: string
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          valor?: string
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          valor?: string
         }
         Relationships: []
       }
