@@ -90,7 +90,15 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/auth"
+            onClick={() => setOpen(false)}
+            className="mt-1 rounded-md border border-gold px-3 py-3 text-base font-bold text-gold"
+          >
+            Acesso Admin
+          </Link>
         </nav>
+
       )}
     </header>
   );
