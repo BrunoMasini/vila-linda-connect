@@ -110,11 +110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cultos: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          hora_fim: string | null
+          hora_inicio: string | null
+          id: string
+          igreja: Database["public"]["Enums"]["igreja_tipo"]
+          ordem: number
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          hora_fim?: string | null
+          hora_inicio?: string | null
+          id?: string
+          igreja: Database["public"]["Enums"]["igreja_tipo"]
+          ordem?: number
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          hora_fim?: string | null
+          hora_inicio?: string | null
+          id?: string
+          igreja?: Database["public"]["Enums"]["igreja_tipo"]
+          ordem?: number
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       eventos: {
         Row: {
           created_at: string
           data: string
           descricao: string | null
+          foto_url: string | null
           hora: string | null
           id: string
           preletor: string | null
@@ -124,6 +161,7 @@ export type Database = {
           created_at?: string
           data: string
           descricao?: string | null
+          foto_url?: string | null
           hora?: string | null
           id?: string
           preletor?: string | null
@@ -133,6 +171,7 @@ export type Database = {
           created_at?: string
           data?: string
           descricao?: string | null
+          foto_url?: string | null
           hora?: string | null
           id?: string
           preletor?: string | null
@@ -263,6 +302,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      igreja_tipo: "sede" | "filial"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -391,6 +431,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      igreja_tipo: ["sede", "filial"],
     },
   },
 } as const
