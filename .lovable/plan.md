@@ -1,72 +1,41 @@
-## Diagnóstico
-
-Cada aba do site tem partes editáveis e partes "fixas no código". Vou listar o estado atual e o que falta:
-
-| Aba | Já editável no admin | O que ainda é texto fixo |
-|---|---|---|
-| **Página Inicial** | Banners do carrossel (aba Mídia) | Bloco "A PAZ DE CRISTO JESUS!" — título, parágrafos de boas-vindas e versículo |
-| **Eventos** | Eventos da agenda + Aniversariantes | (nada) |
-| **Gestão Ministerial** | Líderes (aba Biografias) | Subtítulo da página |
-| **Faça a Obra** | (nada) | Versículo de cabeçalho + os 3 cards (Dízimos, Missões, Voluntariado) com título/texto/PIX/detalhes |
-| **Contatos** | (nada) | Endereço, telefone, e-mail, redes sociais, mapa |
-
-Eventos já está 100% editável. As outras quatro precisam ganhar edição no painel.
-
 ## O que será feito
 
-### 1. Banco de dados — 3 novas tabelas
+### 1. Nova aba "Cultos" no site
 
-**a) `contatos_igreja`** (registro único, "configurações")
-- endereço, telefone, whatsapp, e-mail
-- Instagram, Facebook, YouTube (URLs, opcionais)
-- URL do mapa (Google Maps embed)
+- Novo link **Cultos** no menu do header (entre Eventos e Gestão Ministerial).
+- Página `/cultos` com duas sub-abas: **Igreja Sede** e **Igreja Filial**.
+- Cada culto aparece como cartão com título, dia da semana/frequência e horário, no mesmo estilo visual de Eventos.
 
-**b) `pagina_textos`** (chave/valor para textos editáveis)
-Guarda os textos das páginas que hoje são fixos:
-- `home_titulo`, `home_paragrafo1`, `home_paragrafo2`, `home_versiculo`
-- `ministerial_subtitulo`
-- `obra_versiculo_topo`
+### 2. Edição via painel admin (CRUD completo)
 
-Tabela simples com `chave` e `valor` — admin edita por formulário organizado por página.
+- Nova aba **Cultos** em `/admin`.
+- Para cada culto: título, descrição (ex.: "todo primeiro sábado do mês"), horário de início e fim, igreja (Sede / Filial), ordem de exibição.
+- Pré-cadastra os 8 cultos que você listou (6 Sede + 3 Filial — Cura e Libertação aparece nas duas).
 
-**c) `obra_cards`** (CRUD completo, igual ao de Eventos/Líderes)
-- ícone (Coração / Mão / Avião — seleção), título, texto, detalhe (ex.: chave PIX)
-- ordem
+### 3. Foto de capa nos Eventos
 
-Regras de acesso para as três:
-- Visitantes podem **ler**.
-- Apenas **admin** pode **criar/editar/excluir**.
+- Adiciona campo **foto** (opcional) na tabela de eventos.
+- Aba admin Eventos ganha upload de imagem (igual ao de Aniversariantes).
+- Página pública `/eventos` exibe a foto no card quando houver.
 
-Pré-preenchidas com os valores atuais que estão no site (você só ajusta).
-
-### 2. Painel admin — 3 novas abas
-
-Adicionar à barra do `/admin`, ao lado das existentes:
-- **Página Inicial** — formulário com os textos de boas-vindas (título, parágrafos, versículo). Lembrete visual: "os banners do topo são editados na aba Mídia".
-- **Faça a Obra** — campo de versículo do topo + lista CRUD dos cards (criar, editar, reordenar, excluir), com seletor de ícone.
-- **Contatos** — formulário único com endereço, telefone, WhatsApp, e‑mail, links das redes sociais e URL do mapa. Validações de e‑mail/URL.
-
-A aba **Gestão Ministerial** ganha um campo de subtítulo dentro da aba "Página Inicial" (ou aba própria pequena) — me diga qual prefere; vou seguir com **incluir junto na aba Página Inicial** por simplicidade.
-
-### 3. Páginas públicas
-
-- `/` (Home): bloco de boas-vindas passa a ler `pagina_textos`.
-- `/ministerial`: subtítulo passa a ler `pagina_textos`.
-- `/obra`: versículo do topo lê `pagina_textos`; cards listam `obra_cards`.
-- `/contatos`: todos os campos leem `contatos_igreja`; cada rede social só aparece se preenchida; mapa usa a URL configurada.
-
-Layout/visual permanecem iguais — só a origem dos textos muda.
-
-### 4. Rodapé (Footer)
-Sem alterações de conteúdo agora (hoje só mostra nome da igreja e ano). Se quiser que ele também mostre telefone/redes vindo do admin, me avise.
+### 4. Aniversariantes
+- Já tem upload de foto funcionando hoje no admin. Sem alteração — confirmado.
 
 ## Detalhes técnicos
 
-- Migrations criam as 3 tabelas em `public` com GRANTs, RLS habilitado e policies: `SELECT` público + `ALL` para admin via `has_role(auth.uid(),'admin')`. Seed com os valores atuais.
-- Novos arquivos:
-  - `src/routes/_authenticated/admin.pagina-inicial.tsx`
-  - `src/routes/_authenticated/admin.obra.tsx`
-  - `src/routes/_authenticated/admin.contatos.tsx`
-- Atualiza `src/routes/_authenticated/admin.tsx` (nav de abas) e `src/routes/_authenticated/admin.index.tsx` se houver redirect.
-- Refatora `src/routes/index.tsx`, `ministerial.tsx`, `obra.tsx`, `contatos.tsx` para `useQuery` lendo das novas tabelas, mantendo fallback enquanto carrega.
-- Formulários com `react-hook-form` + `zod`; toasts via `sonner`; estilo idêntico aos formulários já existentes.
+**Banco de dados (1 migração):**
+- Cria `public.cultos` com `titulo`, `descricao`, `igreja` (enum: `sede`/`filial`), `hora_inicio`, `hora_fim`, `ordem`. Grants padrão, RLS: `SELECT` público + `ALL` para admin via `has_role()`. Seed com os 8 cultos.
+- Cria bucket privado `eventos` (storage) e adiciona coluna `foto_url TEXT` em `public.eventos`. Policies admin-only para upload/delete.
+
+**Arquivos novos:**
+- `src/routes/cultos.tsx` (pública, com Tabs Sede/Filial)
+- `src/routes/_authenticated/admin.cultos.tsx` (CRUD)
+
+**Arquivos editados:**
+- `src/components/Header.tsx` — adiciona link "Cultos"
+- `src/routes/_authenticated/admin.tsx` — adiciona aba "Cultos"
+- `src/routes/_authenticated/admin.eventos.tsx` — adiciona upload de foto
+- `src/routes/eventos.tsx` — exibe foto no card da agenda
+- `src/integrations/supabase/types.ts` — regenerado após migração
+
+Formulários com `react-hook-form` + `zod`, toasts via `sonner`, upload reusando `uploadEAssinar` em `src/lib/storage.ts` (com novo bucket `eventos`). Visual idêntico ao restante do CMS.
