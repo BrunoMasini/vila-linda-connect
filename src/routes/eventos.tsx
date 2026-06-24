@@ -20,7 +20,9 @@ type Evento = {
   hora: string | null;
   preletor: string | null;
   descricao: string | null;
+  foto_url: string | null;
 };
+
 
 type Aniversariante = {
   id: string;
@@ -85,29 +87,35 @@ function AgendaList() {
         return (
           <li
             key={e.id}
-            className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 rounded-xl border border-white/10 bg-[color:var(--card)] p-5 sm:gap-6"
+            className="overflow-hidden rounded-xl border border-white/10 bg-[color:var(--card)]"
           >
-            <div className="grid h-20 w-20 shrink-0 place-items-center rounded-lg border-2 border-gold bg-[color:var(--navy-deep)] text-center">
-              <div>
-                <p className="font-display text-3xl font-black leading-none text-gold">
-                  {String(d.getDate()).padStart(2, "0")}
-                </p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/80">
-                  {MESES[d.getMonth()]}
-                </p>
+            {e.foto_url && (
+              <img src={e.foto_url} alt={e.titulo} className="h-48 w-full object-cover sm:h-56" />
+            )}
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 p-5 sm:gap-6">
+              <div className="grid h-20 w-20 shrink-0 place-items-center rounded-lg border-2 border-gold bg-[color:var(--navy-deep)] text-center">
+                <div>
+                  <p className="font-display text-3xl font-black leading-none text-gold">
+                    {String(d.getDate()).padStart(2, "0")}
+                  </p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/80">
+                    {MESES[d.getMonth()]}
+                  </p>
+                </div>
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-display text-lg font-bold text-white sm:text-xl">{e.titulo}</h3>
+                {e.hora && (
+                  <p className="mt-1 text-sm font-semibold text-gold">
+                    {e.hora.slice(0, 5)}
+                    {e.preletor && <span className="text-white/70"> · {e.preletor}</span>}
+                  </p>
+                )}
+                {e.descricao && <p className="mt-2 text-sm text-white/80">{e.descricao}</p>}
               </div>
             </div>
-            <div className="min-w-0">
-              <h3 className="font-display text-lg font-bold text-white sm:text-xl">{e.titulo}</h3>
-              {e.hora && (
-                <p className="mt-1 text-sm font-semibold text-gold">
-                  {e.hora.slice(0, 5)}
-                  {e.preletor && <span className="text-white/70"> · {e.preletor}</span>}
-                </p>
-              )}
-              {e.descricao && <p className="mt-2 text-sm text-white/80">{e.descricao}</p>}
-            </div>
           </li>
+
         );
       })}
     </ul>

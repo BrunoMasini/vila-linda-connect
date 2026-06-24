@@ -7,6 +7,8 @@ import logoAsset from "@/assets/logo-admvl.jpeg.asset.json";
 const links = [
   { to: "/", label: "Página Inicial" },
   { to: "/eventos", label: "Eventos" },
+  { to: "/cultos", label: "Cultos" },
+
   { to: "/ministerial", label: "Gestão Ministerial" },
   { to: "/biblia", label: "Bíblia Sagrada" },
   { to: "/obra", label: "Faça a Obra" },

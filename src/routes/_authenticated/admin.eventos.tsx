@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { removerDoStorage, uploadEAssinar } from "@/lib/storage";
 
 export const Route = createFileRoute("/_authenticated/admin/eventos")({
   component: AdminEventos,
@@ -24,6 +25,7 @@ type Evento = {
   hora: string | null;
   preletor: string | null;
   descricao: string | null;
+  foto_url: string | null;
 };
 
 function AdminEventos() {
@@ -41,8 +43,9 @@ function AdminEventos() {
   });
 
   const del = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("eventos").delete().eq("id", id);
+    mutationFn: async (e: Evento) => {
+      if (e.foto_url) await removerDoStorage("eventos", e.foto_url);
+      const { error } = await supabase.from("eventos").delete().eq("id", e.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -73,6 +76,7 @@ function AdminEventos() {
           <table className="w-full text-sm">
             <thead className="bg-[color:var(--navy-deep)] text-left text-xs uppercase tracking-wider text-gold">
               <tr>
+                <th className="px-4 py-3">Foto</th>
                 <th className="px-4 py-3">Data</th>
                 <th className="px-4 py-3">Título</th>
                 <th className="px-4 py-3">Preletor</th>
@@ -82,6 +86,13 @@ function AdminEventos() {
             <tbody>
               {data.map((e) => (
                 <tr key={e.id} className="border-t border-white/5 text-white/90">
+                  <td className="px-4 py-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-md bg-[color:var(--navy-deep)]">
+                      {e.foto_url && (
+                        <img src={e.foto_url} alt="" className="h-full w-full object-cover" />
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 font-semibold text-gold">
                     {new Date(e.data + "T00:00:00").toLocaleDateString("pt-BR")}
                     {e.hora && <span className="text-white/60"> {e.hora.slice(0, 5)}</span>}
@@ -100,7 +111,7 @@ function AdminEventos() {
                       />
                       <button
                         onClick={() => {
-                          if (confirm("Excluir este evento?")) del.mutate(e.id);
+                          if (confirm("Excluir este evento?")) del.mutate(e);
                         }}
                         className="rounded p-1.5 text-white/70 hover:bg-destructive/20 hover:text-destructive"
                       >
@@ -112,7 +123,7 @@ function AdminEventos() {
               ))}
               {data.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-white/50">
+                  <td colSpan={5} className="px-4 py-8 text-center text-white/50">
                     Nenhum evento cadastrado.
                   </td>
                 </tr>
@@ -139,15 +150,25 @@ function EventoDialog({
   const [hora, setHora] = useState(evento?.hora ?? "");
   const [preletor, setPreletor] = useState(evento?.preletor ?? "");
   const [descricao, setDescricao] = useState(evento?.descricao ?? "");
+  const [file, setFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
 
-  const save = useMutation({
-    mutationFn: async () => {
+  async function salvar(ev: React.FormEvent) {
+    ev.preventDefault();
+    setSaving(true);
+    try {
+      let foto_url = evento?.foto_url ?? null;
+      if (file) {
+        if (evento?.foto_url) await removerDoStorage("eventos", evento.foto_url);
+        foto_url = await uploadEAssinar("eventos", file);
+      }
       const payload = {
         titulo,
         data,
         hora: hora || null,
         preletor: preletor || null,
         descricao: descricao || null,
+        foto_url,
       };
       if (evento) {
         const { error } = await supabase.from("eventos").update(payload).eq("id", evento.id);
@@ -156,18 +177,19 @@ function EventoDialog({
         const { error } = await supabase.from("eventos").insert(payload);
         if (error) throw error;
       }
-    },
-    onSuccess: () => {
       toast.success(evento ? "Evento atualizado" : "Evento criado");
       qc.invalidateQueries({ queryKey: ["admin-eventos"] });
       qc.invalidateQueries({ queryKey: ["eventos-publico"] });
       setOpen(false);
       if (!evento) {
-        setTitulo(""); setData(""); setHora(""); setPreletor(""); setDescricao("");
+        setTitulo(""); setData(""); setHora(""); setPreletor(""); setDescricao(""); setFile(null);
       }
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -176,10 +198,7 @@ function EventoDialog({
         <DialogHeader>
           <DialogTitle>{evento ? "Editar evento" : "Novo evento"}</DialogTitle>
         </DialogHeader>
-        <form
-          onSubmit={(e) => { e.preventDefault(); save.mutate(); }}
-          className="space-y-3"
-        >
+        <form onSubmit={salvar} className="space-y-3">
           <Field label="Título"><Input value={titulo} onChange={setTitulo} required /></Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Data"><Input type="date" value={data} onChange={setData} required /></Field>
@@ -194,13 +213,24 @@ function EventoDialog({
               className="w-full rounded-md border border-white/15 bg-[color:var(--navy-deep)] px-3 py-2 text-sm text-white"
             />
           </Field>
+          <Field label={evento?.foto_url ? "Substituir foto" : "Foto (opcional)"}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              className="w-full text-sm text-white file:mr-3 file:rounded-md file:border-0 file:bg-gold file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-[color:var(--navy)]"
+            />
+          </Field>
+          {evento?.foto_url && !file && (
+            <img src={evento.foto_url} alt="" className="h-24 w-full rounded-md object-cover" />
+          )}
           <DialogFooter>
             <button
               type="submit"
-              disabled={save.isPending}
+              disabled={saving}
               className="rounded-md bg-gold px-4 py-2 text-sm font-black text-[color:var(--navy)] disabled:opacity-60"
             >
-              {save.isPending ? "Salvando..." : "Salvar"}
+              {saving ? "Salvando..." : "Salvar"}
             </button>
           </DialogFooter>
         </form>

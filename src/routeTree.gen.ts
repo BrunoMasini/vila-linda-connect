@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ObraRouteImport } from './routes/obra'
 import { Route as MinisterialRouteImport } from './routes/ministerial'
 import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as CultosRouteImport } from './routes/cultos'
 import { Route as ContatosRouteImport } from './routes/contatos'
 import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -23,6 +24,7 @@ import { Route as AuthenticatedAdminPaginaInicialRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminObraRouteImport } from './routes/_authenticated/admin.obra'
 import { Route as AuthenticatedAdminMidiaRouteImport } from './routes/_authenticated/admin.midia'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminCultosRouteImport } from './routes/_authenticated/admin.cultos'
 import { Route as AuthenticatedAdminContatosRouteImport } from './routes/_authenticated/admin.contatos'
 import { Route as AuthenticatedAdminBiografiasRouteImport } from './routes/_authenticated/admin.biografias'
 import { Route as AuthenticatedAdminAniversariantesRouteImport } from './routes/_authenticated/admin.aniversariantes'
@@ -40,6 +42,11 @@ const MinisterialRoute = MinisterialRouteImport.update({
 const EventosRoute = EventosRouteImport.update({
   id: '/eventos',
   path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CultosRoute = CultosRouteImport.update({
+  id: '/cultos',
+  path: '/cultos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatosRoute = ContatosRouteImport.update({
@@ -98,6 +105,12 @@ const AuthenticatedAdminEventosRoute =
     path: '/eventos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCultosRoute =
+  AuthenticatedAdminCultosRouteImport.update({
+    id: '/cultos',
+    path: '/cultos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminContatosRoute =
   AuthenticatedAdminContatosRouteImport.update({
     id: '/contatos',
@@ -122,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
+  '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
@@ -129,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/contatos': typeof AuthenticatedAdminContatosRoute
+  '/admin/cultos': typeof AuthenticatedAdminCultosRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
   '/admin/obra': typeof AuthenticatedAdminObraRoute
@@ -140,12 +155,14 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
+  '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/contatos': typeof AuthenticatedAdminContatosRoute
+  '/admin/cultos': typeof AuthenticatedAdminCultosRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/midia': typeof AuthenticatedAdminMidiaRoute
   '/admin/obra': typeof AuthenticatedAdminObraRoute
@@ -159,6 +176,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/biblia': typeof BibliaRoute
   '/contatos': typeof ContatosRoute
+  '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
@@ -166,6 +184,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/_authenticated/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/_authenticated/admin/contatos': typeof AuthenticatedAdminContatosRoute
+  '/_authenticated/admin/cultos': typeof AuthenticatedAdminCultosRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/_authenticated/admin/midia': typeof AuthenticatedAdminMidiaRoute
   '/_authenticated/admin/obra': typeof AuthenticatedAdminObraRoute
@@ -179,6 +198,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/biblia'
     | '/contatos'
+    | '/cultos'
     | '/eventos'
     | '/ministerial'
     | '/obra'
@@ -186,6 +206,7 @@ export interface FileRouteTypes {
     | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/contatos'
+    | '/admin/cultos'
     | '/admin/eventos'
     | '/admin/midia'
     | '/admin/obra'
@@ -197,12 +218,14 @@ export interface FileRouteTypes {
     | '/auth'
     | '/biblia'
     | '/contatos'
+    | '/cultos'
     | '/eventos'
     | '/ministerial'
     | '/obra'
     | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/contatos'
+    | '/admin/cultos'
     | '/admin/eventos'
     | '/admin/midia'
     | '/admin/obra'
@@ -215,6 +238,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/biblia'
     | '/contatos'
+    | '/cultos'
     | '/eventos'
     | '/ministerial'
     | '/obra'
@@ -222,6 +246,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/aniversariantes'
     | '/_authenticated/admin/biografias'
     | '/_authenticated/admin/contatos'
+    | '/_authenticated/admin/cultos'
     | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/midia'
     | '/_authenticated/admin/obra'
@@ -235,6 +260,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BibliaRoute: typeof BibliaRoute
   ContatosRoute: typeof ContatosRoute
+  CultosRoute: typeof CultosRoute
   EventosRoute: typeof EventosRoute
   MinisterialRoute: typeof MinisterialRoute
   ObraRoute: typeof ObraRoute
@@ -261,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/eventos'
       fullPath: '/eventos'
       preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cultos': {
+      id: '/cultos'
+      path: '/cultos'
+      fullPath: '/cultos'
+      preLoaderRoute: typeof CultosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contatos': {
@@ -340,6 +373,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/cultos': {
+      id: '/_authenticated/admin/cultos'
+      path: '/cultos'
+      fullPath: '/admin/cultos'
+      preLoaderRoute: typeof AuthenticatedAdminCultosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/contatos': {
       id: '/_authenticated/admin/contatos'
       path: '/contatos'
@@ -368,6 +408,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAniversariantesRoute: typeof AuthenticatedAdminAniversariantesRoute
   AuthenticatedAdminBiografiasRoute: typeof AuthenticatedAdminBiografiasRoute
   AuthenticatedAdminContatosRoute: typeof AuthenticatedAdminContatosRoute
+  AuthenticatedAdminCultosRoute: typeof AuthenticatedAdminCultosRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
   AuthenticatedAdminMidiaRoute: typeof AuthenticatedAdminMidiaRoute
   AuthenticatedAdminObraRoute: typeof AuthenticatedAdminObraRoute
@@ -380,6 +421,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminAniversariantesRoute,
   AuthenticatedAdminBiografiasRoute: AuthenticatedAdminBiografiasRoute,
   AuthenticatedAdminContatosRoute: AuthenticatedAdminContatosRoute,
+  AuthenticatedAdminCultosRoute: AuthenticatedAdminCultosRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
   AuthenticatedAdminMidiaRoute: AuthenticatedAdminMidiaRoute,
   AuthenticatedAdminObraRoute: AuthenticatedAdminObraRoute,
@@ -407,6 +449,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BibliaRoute: BibliaRoute,
   ContatosRoute: ContatosRoute,
+  CultosRoute: CultosRoute,
   EventosRoute: EventosRoute,
   MinisterialRoute: MinisterialRoute,
   ObraRoute: ObraRoute,
@@ -414,13 +457,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

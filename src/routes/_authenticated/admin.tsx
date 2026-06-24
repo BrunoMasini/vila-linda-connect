@@ -9,6 +9,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const tabs = [
   { to: "/admin/pagina-inicial", label: "Página Inicial" },
   { to: "/admin/eventos", label: "Eventos" },
+  { to: "/admin/cultos", label: "Cultos" },
+
   { to: "/admin/midia", label: "Mídia" },
   { to: "/admin/biografias", label: "Biografias" },
   { to: "/admin/aniversariantes", label: "Aniversariantes" },
