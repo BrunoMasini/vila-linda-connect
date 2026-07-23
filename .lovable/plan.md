@@ -1,41 +1,41 @@
 ## O que será feito
 
-### 1. Nova aba "Cultos" no site
+### 1. Nova aba "Galeria" no menu público
+- Link **Galeria** no header (entre Cultos e Gestão Ministerial).
+- Página `/galeria` lista os álbuns publicados, em grid de cards com foto de capa, título do evento, data e contagem de fotos.
+- Clicar num álbum abre `/galeria/$id` com grid de todas as fotos e lightbox (clique = ampliar, setas para navegar, ESC/clique fora fecha).
+- Só aparecem álbuns marcados como **publicados** pelo admin.
 
-- Novo link **Cultos** no menu do header (entre Eventos e Gestão Ministerial).
-- Página `/cultos` com duas sub-abas: **Igreja Sede** e **Igreja Filial**.
-- Cada culto aparece como cartão com título, dia da semana/frequência e horário, no mesmo estilo visual de Eventos.
+### 2. CRUD de álbuns no painel admin
+- Nova aba **Galeria** em `/admin`.
+- Lista todos os eventos (passados e futuros) com um botão por evento:
+  - "Criar álbum" (quando ainda não existe) ou
+  - "Gerenciar álbum" (quando já existe).
+- Dentro do álbum do evento: toggle **Publicado / Rascunho**, upload de múltiplas fotos de uma vez, reordenar, definir foto de capa e excluir fotos individualmente.
+- Ao excluir o álbum, as fotos do storage também são removidas.
 
-### 2. Edição via painel admin (CRUD completo)
-
-- Nova aba **Cultos** em `/admin`.
-- Para cada culto: título, descrição (ex.: "todo primeiro sábado do mês"), horário de início e fim, igreja (Sede / Filial), ordem de exibição.
-- Pré-cadastra os 8 cultos que você listou (6 Sede + 3 Filial — Cura e Libertação aparece nas duas).
-
-### 3. Foto de capa nos Eventos
-
-- Adiciona campo **foto** (opcional) na tabela de eventos.
-- Aba admin Eventos ganha upload de imagem (igual ao de Aniversariantes).
-- Página pública `/eventos` exibe a foto no card quando houver.
-
-### 4. Aniversariantes
-- Já tem upload de foto funcionando hoje no admin. Sem alteração — confirmado.
+### 3. Comportamento
+- Todo evento cadastrado pode receber um álbum — não há restrição de data. Você decide quando ativar (publicar) para aparecer na Galeria pública.
+- Se não houver capa definida manualmente, usa a primeira foto do álbum. Se o evento tiver `foto_url`, ele é oferecido como sugestão inicial de capa.
 
 ## Detalhes técnicos
 
-**Banco de dados (1 migração):**
-- Cria `public.cultos` com `titulo`, `descricao`, `igreja` (enum: `sede`/`filial`), `hora_inicio`, `hora_fim`, `ordem`. Grants padrão, RLS: `SELECT` público + `ALL` para admin via `has_role()`. Seed com os 8 cultos.
-- Cria bucket privado `eventos` (storage) e adiciona coluna `foto_url TEXT` em `public.eventos`. Policies admin-only para upload/delete.
+**Banco (1 migração):**
+- `public.galeria_albuns`: `evento_id` (FK → eventos, ON DELETE CASCADE, UNIQUE), `publicado` (bool default false), `capa_url` (nullable), timestamps.
+- `public.galeria_fotos`: `album_id` (FK → galeria_albuns, ON DELETE CASCADE), `url`, `ordem` (int), timestamps.
+- GRANTs: `SELECT` para `anon`+`authenticated`, `ALL` para admin via `has_role()` e `service_role`. RLS habilitado.
+- Policies públicas de leitura filtram `publicado = true` no álbum (e join nas fotos).
+- Bucket privado **`galeria`** criado via tool (URLs assinadas de 10 anos, mesmo padrão dos outros buckets).
 
 **Arquivos novos:**
-- `src/routes/cultos.tsx` (pública, com Tabs Sede/Filial)
-- `src/routes/_authenticated/admin.cultos.tsx` (CRUD)
+- `src/routes/galeria.tsx` — lista de álbuns publicados
+- `src/routes/galeria.$id.tsx` — álbum com lightbox
+- `src/routes/_authenticated/admin.galeria.tsx` — CRUD (lista de eventos + dialog de gerenciamento)
 
 **Arquivos editados:**
-- `src/components/Header.tsx` — adiciona link "Cultos"
-- `src/routes/_authenticated/admin.tsx` — adiciona aba "Cultos"
-- `src/routes/_authenticated/admin.eventos.tsx` — adiciona upload de foto
-- `src/routes/eventos.tsx` — exibe foto no card da agenda
-- `src/integrations/supabase/types.ts` — regenerado após migração
+- `src/components/Header.tsx` — adiciona link "Galeria"
+- `src/routes/_authenticated/admin.tsx` — adiciona aba "Galeria"
+- `src/lib/storage.ts` — inclui `"galeria"` nos tipos de bucket aceitos
+- `src/integrations/supabase/types.ts` — regenerado após a migração
 
-Formulários com `react-hook-form` + `zod`, toasts via `sonner`, upload reusando `uploadEAssinar` em `src/lib/storage.ts` (com novo bucket `eventos`). Visual idêntico ao restante do CMS.
+Upload múltiplo com `Promise.all` reusando `uploadEAssinar`. Lightbox implementado com componente próprio simples (sem nova dependência). Visual consistente com o resto do site (cards escuros, dourado nos acentos).
