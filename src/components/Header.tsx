@@ -8,6 +8,8 @@ const links = [
   { to: "/", label: "Página Inicial" },
   { to: "/eventos", label: "Eventos" },
   { to: "/cultos", label: "Cultos" },
+  { to: "/galeria", label: "Galeria" },
+
 
   { to: "/ministerial", label: "Gestão Ministerial" },
   { to: "/biblia", label: "Bíblia Sagrada" },
