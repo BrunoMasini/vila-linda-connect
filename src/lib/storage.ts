@@ -31,7 +31,7 @@ export function extrairCaminhoDeUrl(bucket: string, url: string): string | null 
 }
 
 export async function removerDoStorage(
-  bucket: "banners" | "lideres" | "aniversariantes" | "eventos",
+  bucket: "banners" | "lideres" | "aniversariantes" | "eventos" | "galeria",
   url: string,
 ) {
 
