@@ -179,6 +179,76 @@ export type Database = {
         }
         Relationships: []
       }
+      galeria_albuns: {
+        Row: {
+          capa_url: string | null
+          created_at: string
+          evento_id: string
+          id: string
+          publicado: boolean
+          updated_at: string
+        }
+        Insert: {
+          capa_url?: string | null
+          created_at?: string
+          evento_id: string
+          id?: string
+          publicado?: boolean
+          updated_at?: string
+        }
+        Update: {
+          capa_url?: string | null
+          created_at?: string
+          evento_id?: string
+          id?: string
+          publicado?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galeria_albuns_evento_id_fkey"
+            columns: ["evento_id"]
+            isOneToOne: true
+            referencedRelation: "eventos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      galeria_fotos: {
+        Row: {
+          album_id: string
+          created_at: string
+          id: string
+          ordem: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          album_id: string
+          created_at?: string
+          id?: string
+          ordem?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          album_id?: string
+          created_at?: string
+          id?: string
+          ordem?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "galeria_fotos_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "galeria_albuns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lideres: {
         Row: {
           biografia: string | null
