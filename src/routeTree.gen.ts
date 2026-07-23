@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ObraRouteImport } from './routes/obra'
 import { Route as MinisterialRouteImport } from './routes/ministerial'
+import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as CultosRouteImport } from './routes/cultos'
 import { Route as ContatosRouteImport } from './routes/contatos'
@@ -37,6 +38,11 @@ const ObraRoute = ObraRouteImport.update({
 const MinisterialRoute = MinisterialRouteImport.update({
   id: '/ministerial',
   path: '/ministerial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosRoute = EventosRouteImport.update({
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/contatos': typeof ContatosRoute
   '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/contatos': typeof ContatosRoute
   '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/contatos': typeof ContatosRoute
   '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
+  '/galeria': typeof GaleriaRoute
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/contatos'
     | '/cultos'
     | '/eventos'
+    | '/galeria'
     | '/ministerial'
     | '/obra'
     | '/admin'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/contatos'
     | '/cultos'
     | '/eventos'
+    | '/galeria'
     | '/ministerial'
     | '/obra'
     | '/admin/aniversariantes'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/contatos'
     | '/cultos'
     | '/eventos'
+    | '/galeria'
     | '/ministerial'
     | '/obra'
     | '/_authenticated/admin'
@@ -262,6 +274,7 @@ export interface RootRouteChildren {
   ContatosRoute: typeof ContatosRoute
   CultosRoute: typeof CultosRoute
   EventosRoute: typeof EventosRoute
+  GaleriaRoute: typeof GaleriaRoute
   MinisterialRoute: typeof MinisterialRoute
   ObraRoute: typeof ObraRoute
 }
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/ministerial'
       fullPath: '/ministerial'
       preLoaderRoute: typeof MinisterialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos': {
@@ -451,6 +471,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContatosRoute: ContatosRoute,
   CultosRoute: CultosRoute,
   EventosRoute: EventosRoute,
+  GaleriaRoute: GaleriaRoute,
   MinisterialRoute: MinisterialRoute,
   ObraRoute: ObraRoute,
 }
