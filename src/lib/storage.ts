@@ -7,7 +7,8 @@ const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
  * We store the signed URL in the DB; it stays valid for ~10 years.
  */
 export async function uploadEAssinar(
-  bucket: "banners" | "lideres" | "aniversariantes" | "eventos",
+  bucket: "banners" | "lideres" | "aniversariantes" | "eventos" | "galeria",
+
   file: File,
 ): Promise<string> {
 
