@@ -1,12 +1,12 @@
-## Causa do erro
+## Causa
 
-As tabelas `galeria_albuns` e `galeria_fotos` foram criadas com RLS e policies corretas, mas **sem `GRANT`s** para os papéis do PostgREST. Sem grant de `SELECT`, o embed que a aba Galeria do admin faz (`eventos → galeria_albuns → galeria_fotos`) volta vazio mesmo quando o álbum existe. Resultado: a lista mostra "—" e o botão "Criar álbum", e ao clicar tenta inserir um segundo álbum para o mesmo evento — violando `galeria_albuns_evento_id_key`.
+Confirmei no banco: já existe o álbum rascunho do culto de 18/07 (`3202e98f...`), mas **as tabelas `galeria_albuns` e `galeria_fotos` continuam sem nenhum GRANT** para `anon`, `authenticated` ou `service_role`. A migração anterior de GRANTs não foi aplicada (provavelmente rejeitada/perdida). Sem grant de SELECT, o PostgREST bloqueia a leitura antes mesmo de avaliar a RLS — o admin não enxerga o álbum existente, mostra "Criar álbum" e o INSERT bate na `UNIQUE(evento_id)`.
 
-Confirmado no banco: já existe um álbum (rascunho) para o evento "Culto na Direção da Irmãs" (18/07), mas o admin não o enxerga.
+As policies de RLS estão corretas (admin vê tudo, público vê só publicados). Falta só o grant.
 
-## Correção (uma migração)
+## Correção
 
-Adicionar os GRANTs que faltaram:
+Uma única migração, sem tocar em código do app:
 
 ```sql
 GRANT SELECT ON public.galeria_albuns TO anon;
@@ -18,8 +18,4 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.galeria_fotos TO authenticated;
 GRANT ALL ON public.galeria_fotos TO service_role;
 ```
 
-RLS continua controlando quem vê o quê:
-- Público (anon/authenticated) só vê álbuns com `publicado = true` e suas fotos.
-- Admin vê e gerencia tudo (policies já existentes usando `has_role`).
-
-Nenhuma mudança em código do app é necessária — depois da migração, a aba Galeria do admin passa a listar o álbum já existente e o botão vira "Gerenciar" em vez de "Criar álbum".
+Depois disso, a aba Galeria do admin passa a listar o álbum já existente do culto de 18/07 e o botão vira **Gerenciar** em vez de **Criar álbum**, eliminando o erro de chave duplicada.
