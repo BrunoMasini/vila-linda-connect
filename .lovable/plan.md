@@ -1,41 +1,25 @@
-## O que será feito
+## Causa do erro
 
-### 1. Nova aba "Galeria" no menu público
-- Link **Galeria** no header (entre Cultos e Gestão Ministerial).
-- Página `/galeria` lista os álbuns publicados, em grid de cards com foto de capa, título do evento, data e contagem de fotos.
-- Clicar num álbum abre `/galeria/$id` com grid de todas as fotos e lightbox (clique = ampliar, setas para navegar, ESC/clique fora fecha).
-- Só aparecem álbuns marcados como **publicados** pelo admin.
+As tabelas `galeria_albuns` e `galeria_fotos` foram criadas com RLS e policies corretas, mas **sem `GRANT`s** para os papéis do PostgREST. Sem grant de `SELECT`, o embed que a aba Galeria do admin faz (`eventos → galeria_albuns → galeria_fotos`) volta vazio mesmo quando o álbum existe. Resultado: a lista mostra "—" e o botão "Criar álbum", e ao clicar tenta inserir um segundo álbum para o mesmo evento — violando `galeria_albuns_evento_id_key`.
 
-### 2. CRUD de álbuns no painel admin
-- Nova aba **Galeria** em `/admin`.
-- Lista todos os eventos (passados e futuros) com um botão por evento:
-  - "Criar álbum" (quando ainda não existe) ou
-  - "Gerenciar álbum" (quando já existe).
-- Dentro do álbum do evento: toggle **Publicado / Rascunho**, upload de múltiplas fotos de uma vez, reordenar, definir foto de capa e excluir fotos individualmente.
-- Ao excluir o álbum, as fotos do storage também são removidas.
+Confirmado no banco: já existe um álbum (rascunho) para o evento "Culto na Direção da Irmãs" (18/07), mas o admin não o enxerga.
 
-### 3. Comportamento
-- Todo evento cadastrado pode receber um álbum — não há restrição de data. Você decide quando ativar (publicar) para aparecer na Galeria pública.
-- Se não houver capa definida manualmente, usa a primeira foto do álbum. Se o evento tiver `foto_url`, ele é oferecido como sugestão inicial de capa.
+## Correção (uma migração)
 
-## Detalhes técnicos
+Adicionar os GRANTs que faltaram:
 
-**Banco (1 migração):**
-- `public.galeria_albuns`: `evento_id` (FK → eventos, ON DELETE CASCADE, UNIQUE), `publicado` (bool default false), `capa_url` (nullable), timestamps.
-- `public.galeria_fotos`: `album_id` (FK → galeria_albuns, ON DELETE CASCADE), `url`, `ordem` (int), timestamps.
-- GRANTs: `SELECT` para `anon`+`authenticated`, `ALL` para admin via `has_role()` e `service_role`. RLS habilitado.
-- Policies públicas de leitura filtram `publicado = true` no álbum (e join nas fotos).
-- Bucket privado **`galeria`** criado via tool (URLs assinadas de 10 anos, mesmo padrão dos outros buckets).
+```sql
+GRANT SELECT ON public.galeria_albuns TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.galeria_albuns TO authenticated;
+GRANT ALL ON public.galeria_albuns TO service_role;
 
-**Arquivos novos:**
-- `src/routes/galeria.tsx` — lista de álbuns publicados
-- `src/routes/galeria.$id.tsx` — álbum com lightbox
-- `src/routes/_authenticated/admin.galeria.tsx` — CRUD (lista de eventos + dialog de gerenciamento)
+GRANT SELECT ON public.galeria_fotos TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.galeria_fotos TO authenticated;
+GRANT ALL ON public.galeria_fotos TO service_role;
+```
 
-**Arquivos editados:**
-- `src/components/Header.tsx` — adiciona link "Galeria"
-- `src/routes/_authenticated/admin.tsx` — adiciona aba "Galeria"
-- `src/lib/storage.ts` — inclui `"galeria"` nos tipos de bucket aceitos
-- `src/integrations/supabase/types.ts` — regenerado após a migração
+RLS continua controlando quem vê o quê:
+- Público (anon/authenticated) só vê álbuns com `publicado = true` e suas fotos.
+- Admin vê e gerencia tudo (policies já existentes usando `has_role`).
 
-Upload múltiplo com `Promise.all` reusando `uploadEAssinar`. Lightbox implementado com componente próprio simples (sem nova dependência). Visual consistente com o resto do site (cards escuros, dourado nos acentos).
+Nenhuma mudança em código do app é necessária — depois da migração, a aba Galeria do admin passa a listar o álbum já existente e o botão vira "Gerenciar" em vez de "Criar álbum".
