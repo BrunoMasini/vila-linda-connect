@@ -27,37 +27,53 @@ type EventoRow = {
     | null;
 };
 
+type AlbumRow = {
+  id: string;
+  evento_id: string;
+  publicado: boolean;
+  capa_url: string | null;
+  galeria_fotos: { count: number }[];
+};
+
 function AdminGaleria() {
   const { data = [], isLoading } = useQuery({
     queryKey: ["admin-galeria-eventos"],
     queryFn: async (): Promise<EventoRow[]> => {
-      const { data, error } = await supabase
-        .from("eventos")
-        .select("id, titulo, data, foto_url, galeria_albuns(id, publicado, capa_url, galeria_fotos(count))")
-        .order("data", { ascending: false });
-      if (error) throw error;
-      const rows = (data ?? []) as unknown as Array<{
+      const [eventosResult, albunsResult] = await Promise.all([
+        supabase.from("eventos").select("id, titulo, data, foto_url").order("data", { ascending: false }),
+        supabase.from("galeria_albuns").select("id, evento_id, publicado, capa_url, galeria_fotos(count)"),
+      ]);
+
+      if (eventosResult.error) throw eventosResult.error;
+      if (albunsResult.error) throw albunsResult.error;
+
+      const albuns = (albunsResult.data ?? []) as unknown as AlbumRow[];
+      const albumPorEvento = new Map(
+        albuns.map((album) => [
+          album.evento_id,
+          {
+            id: album.id,
+            publicado: album.publicado,
+            capa_url: album.capa_url,
+            total: album.galeria_fotos?.[0]?.count ?? 0,
+          },
+        ]),
+      );
+
+      const rows = (eventosResult.data ?? []) as unknown as Array<{
         id: string;
         titulo: string;
         data: string;
         foto_url: string | null;
-        galeria_albuns: Array<{
-          id: string;
-          publicado: boolean;
-          capa_url: string | null;
-          galeria_fotos: { count: number }[];
-        }>;
       }>;
       return rows.map((r) => {
-        const a = r.galeria_albuns?.[0];
+        const album = albumPorEvento.get(r.id) ?? null;
         return {
           id: r.id,
           titulo: r.titulo,
           data: r.data,
           foto_url: r.foto_url,
-          album: a
-            ? { id: a.id, publicado: a.publicado, capa_url: a.capa_url, total: a.galeria_fotos?.[0]?.count ?? 0 }
-            : null,
+          album,
         };
       });
     },
@@ -145,6 +161,7 @@ function AlbumDialog({ evento }: { evento: EventoRow }) {
 
 function AlbumEditor({ evento, onClose }: { evento: EventoRow; onClose: () => void }) {
   const qc = useQueryClient();
+  const [albumDetectadoId, setAlbumDetectadoId] = useState<string | null>(null);
 
   const invalidateAll = () => {
     qc.invalidateQueries({ queryKey: ["admin-galeria-eventos"] });
@@ -153,18 +170,49 @@ function AlbumEditor({ evento, onClose }: { evento: EventoRow; onClose: () => vo
   };
 
   const criar = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase
+    mutationFn: async (): Promise<{ id: string; existente: boolean }> => {
+      const { data: existente, error: buscaError } = await supabase
         .from("galeria_albuns")
-        .insert({ evento_id: evento.id, publicado: false, capa_url: evento.foto_url });
-      if (error) throw error;
+        .select("id")
+        .eq("evento_id", evento.id)
+        .maybeSingle();
+
+      if (buscaError) throw buscaError;
+      if (existente?.id) return { id: existente.id, existente: true };
+
+      const { data: criado, error } = await supabase
+        .from("galeria_albuns")
+        .insert({ evento_id: evento.id, publicado: false, capa_url: evento.foto_url })
+        .select("id")
+        .single();
+
+      if (error) {
+        const isDuplicado = error.code === "23505" || error.message.toLowerCase().includes("duplicate key");
+        if (!isDuplicado) throw error;
+
+        const { data: albumExistente, error: recarregarError } = await supabase
+          .from("galeria_albuns")
+          .select("id")
+          .eq("evento_id", evento.id)
+          .single();
+
+        if (recarregarError) throw recarregarError;
+        return { id: albumExistente.id, existente: true };
+      }
+
+      return { id: criado.id, existente: false };
     },
-    onSuccess: () => {
-      toast.success("Álbum criado");
+    onSuccess: (resultado) => {
+      setAlbumDetectadoId(resultado.id);
+      toast.success(resultado.existente ? "Álbum existente encontrado" : "Álbum criado");
       invalidateAll();
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  if (albumDetectadoId) {
+    return <AlbumFotos albumId={albumDetectadoId} onDeleted={() => { invalidateAll(); onClose(); }} />;
+  }
 
   if (!evento.album) {
     return (
