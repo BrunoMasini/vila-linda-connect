@@ -28,8 +28,9 @@ type AlbumData = {
 function AlbumPage() {
   const { id } = Route.useParams();
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [erroImagem, setErroImagem] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["galeria-album", id],
     queryFn: async (): Promise<AlbumData | null> => {
       const { data, error } = await supabase
@@ -50,7 +51,7 @@ function AlbumPage() {
         id: row.id,
         capa_url: row.capa_url,
         evento: row.evento,
-        fotos: [...row.galeria_fotos].sort((a, b) => a.ordem - b.ordem),
+        fotos: [...(row.galeria_fotos ?? [])].sort((a, b) => a.ordem - b.ordem),
       };
     },
   });
@@ -69,6 +70,16 @@ function AlbumPage() {
 
   if (isLoading) {
     return <div className="mx-auto max-w-6xl px-4 py-16 text-center text-white/60">Carregando...</div>;
+  }
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16 text-center">
+        <p className="text-white/70">Não foi possível carregar as fotos deste álbum.</p>
+        <Link to="/galeria" className="mt-4 inline-block text-gold hover:underline">
+          Voltar para Galeria
+        </Link>
+      </div>
+    );
   }
   if (!data) {
     return (
@@ -104,12 +115,16 @@ function AlbumPage() {
             <button
               key={f.id}
               type="button"
-              onClick={() => setLightbox(i)}
+              aria-label={`Abrir foto ${i + 1}`}
+              onClick={() => {
+                setErroImagem(false);
+                setLightbox(i);
+              }}
               className="group aspect-square overflow-hidden rounded-lg border border-white/10 bg-[color:var(--navy-deep)] focus:outline-none focus:ring-2 focus:ring-gold"
             >
               <img
                 src={f.url}
-                alt=""
+                alt={`Foto ${i + 1} do álbum ${data.evento?.titulo ?? "da galeria"}`}
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
@@ -136,23 +151,35 @@ function AlbumPage() {
             aria-label="Anterior"
             onClick={(e) => {
               e.stopPropagation();
+              setErroImagem(false);
               setLightbox((i) => (i === null ? null : (i - 1 + data.fotos.length) % data.fotos.length));
             }}
             className="absolute left-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
           >
             <ChevronLeft className="h-8 w-8" />
           </button>
-          <img
-            src={data.fotos[lightbox].url}
-            alt=""
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[85vh] max-w-full rounded-lg object-contain"
-          />
+          {erroImagem ? (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-md rounded-lg border border-white/10 bg-[color:var(--navy-deep)] p-6 text-center text-white/70"
+            >
+              Não foi possível abrir esta foto agora.
+            </div>
+          ) : (
+            <img
+              src={data.fotos[lightbox].url}
+              alt={`Foto ${lightbox + 1} do álbum ${data.evento?.titulo ?? "da galeria"}`}
+              onClick={(e) => e.stopPropagation()}
+              onError={() => setErroImagem(true)}
+              className="max-h-[85vh] max-w-full rounded-lg object-contain"
+            />
+          )}
           <button
             type="button"
             aria-label="Próxima"
             onClick={(e) => {
               e.stopPropagation();
+              setErroImagem(false);
               setLightbox((i) => (i === null ? null : (i + 1) % data.fotos.length));
             }}
             className="absolute right-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"

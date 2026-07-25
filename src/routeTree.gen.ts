@@ -19,6 +19,7 @@ import { Route as BibliaRouteImport } from './routes/biblia'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GaleriaIndexRouteImport } from './routes/galeria.index'
 import { Route as GaleriaIdRouteImport } from './routes/galeria.$id'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -80,6 +81,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaIndexRoute = GaleriaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GaleriaRoute,
 } as any)
 const GaleriaIdRoute = GaleriaIdRouteImport.update({
   id: '/$id',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/obra': typeof ObraRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/galeria/$id': typeof GaleriaIdRoute
+  '/galeria/': typeof GaleriaIndexRoute
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/contatos': typeof AuthenticatedAdminContatosRoute
@@ -179,10 +186,10 @@ export interface FileRoutesByTo {
   '/contatos': typeof ContatosRoute
   '/cultos': typeof CultosRoute
   '/eventos': typeof EventosRoute
-  '/galeria': typeof GaleriaRouteWithChildren
   '/ministerial': typeof MinisterialRoute
   '/obra': typeof ObraRoute
   '/galeria/$id': typeof GaleriaIdRoute
+  '/galeria': typeof GaleriaIndexRoute
   '/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/admin/contatos': typeof AuthenticatedAdminContatosRoute
@@ -208,6 +215,7 @@ export interface FileRoutesById {
   '/obra': typeof ObraRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/galeria/$id': typeof GaleriaIdRoute
+  '/galeria/': typeof GaleriaIndexRoute
   '/_authenticated/admin/aniversariantes': typeof AuthenticatedAdminAniversariantesRoute
   '/_authenticated/admin/biografias': typeof AuthenticatedAdminBiografiasRoute
   '/_authenticated/admin/contatos': typeof AuthenticatedAdminContatosRoute
@@ -233,6 +241,7 @@ export interface FileRouteTypes {
     | '/obra'
     | '/admin'
     | '/galeria/$id'
+    | '/galeria/'
     | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/contatos'
@@ -251,10 +260,10 @@ export interface FileRouteTypes {
     | '/contatos'
     | '/cultos'
     | '/eventos'
-    | '/galeria'
     | '/ministerial'
     | '/obra'
     | '/galeria/$id'
+    | '/galeria'
     | '/admin/aniversariantes'
     | '/admin/biografias'
     | '/admin/contatos'
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/obra'
     | '/_authenticated/admin'
     | '/galeria/$id'
+    | '/galeria/'
     | '/_authenticated/admin/aniversariantes'
     | '/_authenticated/admin/biografias'
     | '/_authenticated/admin/contatos'
@@ -375,6 +385,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/galeria/': {
+      id: '/galeria/'
+      path: '/'
+      fullPath: '/galeria/'
+      preLoaderRoute: typeof GaleriaIndexRouteImport
+      parentRoute: typeof GaleriaRoute
     }
     '/galeria/$id': {
       id: '/galeria/$id'
@@ -506,10 +523,12 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface GaleriaRouteChildren {
   GaleriaIdRoute: typeof GaleriaIdRoute
+  GaleriaIndexRoute: typeof GaleriaIndexRoute
 }
 
 const GaleriaRouteChildren: GaleriaRouteChildren = {
   GaleriaIdRoute: GaleriaIdRoute,
+  GaleriaIndexRoute: GaleriaIndexRoute,
 }
 
 const GaleriaRouteWithChildren =
@@ -530,13 +549,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

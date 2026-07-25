@@ -1,32 +1,32 @@
-## Diagnóstico confirmado
+## Plano para corrigir a visualização da galeria
 
-O álbum do evento **“Culto na Direção da Irmãs” (18/07/2026)** já existe no banco, em rascunho. Também confirmei que os GRANTs atuais já estão aplicados e não são mais a causa provável.
+Pelo que foi verificado:
+- O álbum **“Culto na Direção da Irmãs”** existe, está publicado e tem **13 fotos** cadastradas.
+- As fotos estão salvas como URLs assinadas de um bucket privado.
+- A página pública `/galeria` mostra o álbum, mas a navegação/visualização do álbum precisa ficar mais robusta para visitantes.
 
-O problema restante está no fluxo do admin: a tela ainda depende do relacionamento embutido `eventos -> galeria_albuns`. Quando essa leitura não retorna o álbum por qualquer motivo de cache/relacionamento/RLS, a interface mostra **Criar álbum**, mas o banco bloqueia porque já existe `UNIQUE(evento_id)`.
+## O que vou ajustar
 
-## Plano de correção
+1. **Corrigir a página interna do álbum**
+   - Revisar `/galeria/$id` para garantir que o visitante consiga abrir o álbum ao clicar no cartão.
+   - Tratar corretamente o carregamento das 13 fotos e o estado de erro quando a leitura falhar.
+   - Evitar que a página fique sem conteúdo útil caso a consulta retorne álbum sem fotos por alguma regra de acesso.
 
-1. **Trocar a leitura da aba Galeria para ser à prova de falha**
-   - Buscar `eventos` e `galeria_albuns` em consultas separadas.
-   - Montar no frontend um mapa por `evento_id`.
-   - Assim, se o álbum já existe, o botão sempre vira **Gerenciar**.
+2. **Melhorar o clique no álbum**
+   - Garantir que o cartão da galeria leve de forma confiável para a rota do álbum.
+   - Se necessário, trocar o link roteado por navegação explícita compatível com o padrão atual do app.
 
-2. **Blindar o botão “Criar álbum” contra duplicidade**
-   - Antes de inserir, consultar se já existe álbum para o evento.
-   - Se existir, não tentar inserir de novo; atualizar a tela e abrir/mostrar como existente.
-   - Se ainda assim houver conflito, tratar o erro de duplicidade como “álbum já existe”, e não como falha para o usuário.
+3. **Melhorar o lightbox das fotos**
+   - Manter o clique em cada foto abrindo a visualização ampliada.
+   - Preservar os botões de anterior/próxima, fechar e navegação por teclado.
+   - Adicionar mensagens claras caso uma imagem não carregue.
 
-3. **Melhorar a experiência do admin**
-   - Trocar o texto/estado automaticamente após criar ou detectar álbum existente.
-   - Manter publicação, upload, capa e exclusão como estão.
+4. **Validar no preview**
+   - Abrir `/galeria`.
+   - Clicar no álbum “Culto na Direção da Irmãs”.
+   - Confirmar que a página do álbum mostra as 13 fotos.
+   - Clicar em uma foto e confirmar que o lightbox abre corretamente.
 
-4. **Verificação real**
-   - Acessar a aba Galeria no preview autenticado quando possível.
-   - Confirmar que o evento de 18/07 aparece como **Gerenciar**, não **Criar álbum**.
-   - Confirmar que clicar em criar para eventos sem álbum não gera erro de chave duplicada.
+## Observação técnica
 
-## Arquivos a alterar
-
-- `src/routes/_authenticated/admin.galeria.tsx`
-
-Não vou fazer nova migração agora, porque a checagem no banco já confirmou que as permissões existem; a correção deve ser no fluxo da tela e na proteção contra duplicidade.
+A correção será focada no frontend da galeria pública e, se necessário, em pequenos ajustes de leitura das tabelas já existentes. Não vou recriar o álbum nem mexer nas fotos que você já enviou.
